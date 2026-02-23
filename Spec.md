@@ -1,14 +1,4 @@
----
-Name: 24h Trend-to-content-generator
-Description: >
-  24h Trend-to-Content Generator for crypto and AI brands on X (Twitter).
-  Use this skill whenever the user wants to: find trending crypto or AI topics on X/Twitter,
-  generate content ideas based on viral posts, scan social media for hot trends,
-  create brand content from trending topics, monitor what's hot in crypto/AI in the last 24 hours,
-  or get content suggestions based on real-time Twitter/X trends.
-  Trigger this skill even if the user just says "find trend", "write content from trend",
-  "what's hot", "scan X", or mentions monitoring social media for content opportunities.
----
+
 
 # 24h Trend-to-Content Generator
 
