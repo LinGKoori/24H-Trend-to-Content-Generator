@@ -1,6 +1,6 @@
 ---
-name: trend-to-content-generator
-description: >
+Name: 24h Trend-to-content-generator
+Description: >
   24h Trend-to-Content Generator for crypto and AI brands on X (Twitter).
   Use this skill whenever the user wants to: find trending crypto or AI topics on X/Twitter,
   generate content ideas based on viral posts, scan social media for hot trends,
@@ -213,23 +213,7 @@ After all trend alerts, add a summary table:
 💡 TOP PICK: Trend #[N] — [One line reason why this is the best opportunity right now]
 ```
 
----
-
-## Example Run
-
-**User input:**
-> Brand: crypto exchange targeting retail investors. Tone: friendly, educational, slightly degen. Format: single tweet + thread opener.
-
-**Claude action:**
-1. Search X for trending crypto posts in the last 24h
-2. Filter by RT > 10, has comments, not sponsored
-3. Cluster into 3 themes: BTC price movement / new altcoin narrative / regulatory news
-4. Match to brand (exchange — price + altcoin highly relevant, regulation medium)
-5. Output 2–3 trend alerts with ready-to-post draft content
-
----
-
-## Important Notes
+## Notes
 
 - **Always timestamp the scan** — state clearly: "Scanned at [time], trends reflect last 24h from this point"
 - **Never fabricate post data** — if RT counts are not visible in search results, say "estimated high engagement" and note the uncertainty
