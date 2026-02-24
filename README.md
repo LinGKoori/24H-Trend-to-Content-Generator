@@ -126,11 +126,4 @@ Compatible with: Claude Project · Custom GPT · Any LLM platform with web searc
 trend-to-content-generator/
 ├── README.md       <- this file
 └── SKILL.md        <- full skill instructions for AI agent
-```
-
----
-
-## Built For
-
-**Cook a Skill** — Internal Hackathon
 Skill category: Social Media · Content · Crypto/AI Trend Intelligence
