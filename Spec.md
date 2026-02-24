@@ -1,4 +1,14 @@
-
+---
+Name: trend-to-content-generator
+Description: >
+  24h Trend-to-Content Generator for crypto and AI brands on X (Twitter).
+  Use this skill whenever the user wants to: find trending crypto or AI topics on X/Twitter,
+  generate content ideas based on viral posts, scan social media for hot trends,
+  create brand content from trending topics, monitor what's hot in crypto/AI in the last 24 hours,
+  or get content suggestions based on real-time Twitter/X trends.
+  Trigger this skill even if the user just says "find trend", "write content from trend",
+  "what's hot", "scan X", or mentions monitoring social media for content opportunities.
+---
 
 # 24h Trend-to-Content Generator
 
@@ -18,24 +28,44 @@ A skill that scans X (Twitter) for the hottest crypto and AI trends in the past 
 ## Workflow Overview
 
 ```
-INPUT: Brand niche + target audience + tone
-   ↓
-STEP 1: Search X for hot crypto/AI posts (last 24h)
-   ↓
-STEP 2: Filter high-signal posts (impressions, RT/quote > 10, no ads, has comments)
-   ↓
-STEP 3: Cluster into trend themes
-   ↓
-STEP 4: Match trends to brand angle
-   ↓
+INPUT: Brand spec .md file (primary) OR manual brand context
+         |
+STEP 1: Extract brand context -> select 3-5 focused subtopics
+         |
+STEP 2: Search X using focused subtopics (last 24h)
+         |
+STEP 3: Filter high-signal posts (RT/quote > 10, no ads, has comments)
+         |
+STEP 4: Cluster into trend themes
+         |
+STEP 5: Match trends to brand angle
+         |
 OUTPUT: Trend Alert + Content Draft per trend
 ```
 
 ---
 
-## Step 1 — Collect Brand Context (If Not Provided)
+## Step 1 — Extract Brand Context
 
-Before scanning, confirm with the user:
+### Primary Input: Brand Spec .md File
+
+If the user provides a `.md` file (brand guidebook / brand spec), **read it first** and extract the following fields automatically:
+
+| Field | What to look for in the .md file |
+|---|---|
+| **Brand niche** | Product description, "about", category, or positioning section |
+| **Target audience** | Audience, customer persona, or ICP section |
+| **Tone** | Tone of voice, brand voice, or communication guidelines section |
+| **Content format** | Content examples, content pillars, or social media guidelines section |
+| **Keywords / topics** | Any mention of relevant themes, competitors, or industry focus |
+| **KOL / Account list** | Any list of trusted accounts, KOLs, or partners the brand follows — extract handles if present |
+
+After extracting, **confirm with the user** in one message:
+> "I've extracted the following brand context from your spec file: [summary]. Does this look correct before I start scanning?"
+
+### Fallback: Manual Input
+
+If no spec file is provided, ask the user for these fields directly:
 
 | Field | Question |
 |---|---|
@@ -44,49 +74,97 @@ Before scanning, confirm with the user:
 | **Tone** | What is the brand's voice? (e.g., educational, alpha-seeking, casual, professional, degen-friendly...) |
 | **Content format** | What formats does the brand typically post? (Thread, single tweet, meme, infographic caption...) |
 
-If the user already provided these in the prompt, skip asking — extract directly.
+### Accepting Both
+
+If the user provides both a spec file and additional manual context, **spec file takes priority**. Use manual input only to fill gaps or override specific fields the user explicitly calls out.
+
+### Optional: KOL / Account List
+
+The user may provide a list of 10–20 X handles that the brand follows or trusts (KOLs, partner projects, alpha accounts). This is **optional** — if provided, it upgrades the sourcing step:
+
+- **If KOL list is provided:** Scan posts from those accounts first (priority sourcing), then expand to similar accounts and broad search to fill gaps.
+- **If no KOL list is provided:** Use standard broad search across selected subtopics as normal.
+
+The KOL list can come from:
+- The brand spec .md file (extract handles automatically if listed)
+- Manual input: user pastes a list of @handles in the prompt
+
+When KOL list is provided, state before scanning:
+> "KOL list detected — scanning posts from [N] priority accounts first, then expanding to broader search."
+
+---
+
+## Step 1b — Select Focused Subtopics
+
+**Do not scan all subtopics.** Based on the extracted brand niche and audience, select **3–5 subtopics** most relevant to the brand before running any searches.
+
+### Selection Logic
+
+| Brand Type | Recommended Subtopic Focus |
+|---|---|
+| Crypto exchange / trading platform | Market & Price, Tokens & Trends, Institutional & Macro |
+| DeFi protocol | DeFi, Infrastructure & Tech, Tokens & Trends |
+| Web3 / NFT project | Culture & Community, Tokens & Trends, Infrastructure & Tech |
+| AI SaaS / AI productivity tool | Tools & Products, Agents & Automation, Business & Industry |
+| AI research / foundation model | Models & Labs, Research & Breakthroughs, Agents & Automation |
+| Crypto + AI crossover brand | Market & Price, Agents & Automation, Tokens & Trends |
+| General tech / VC / media brand | Business & Industry, Culture & Debate, Models & Labs |
+
+After selecting, state clearly before scanning:
+> "Based on your brand spec, I'll focus the scan on: [subtopic 1], [subtopic 2], [subtopic 3], [subtopic 4]. Starting now."
+
+### Full Subtopic Reference List
+
+Use this as the menu to pick from — do not scan all of these every run:
+
+**Crypto subtopics:**
+- Market & Price: `Bitcoin`, `Ethereum`, `BTC price`, `ETH price`, `altcoin season`, `crypto crash`, `crypto rally`, `market cap`, `crypto dominance`
+- Infrastructure & Tech: `Layer 2`, `L2`, `rollup`, `zkEVM`, `Solana`, `Avalanche`, `Cosmos`, `modular blockchain`, `cross-chain bridge`, `interoperability`
+- DeFi: `DeFi`, `DEX`, `yield farming`, `liquidity pool`, `stablecoin`, `lending protocol`, `TVL`, `restaking`, `liquid staking`, `EigenLayer`
+- Tokens & Trends: `memecoin`, `airdrop`, `token launch`, `IDO`, `presale`, `new listing`, `pump and dump`, `rug pull`, `whale alert`, `on-chain data`
+- Institutional & Macro: `Bitcoin ETF`, `crypto ETF`, `institutional crypto`, `BlackRock crypto`, `crypto regulation`, `SEC crypto`, `CBDC`, `crypto tax`, `macro crypto`, `Fed crypto`
+- Culture & Community: `NFT`, `Web3`, `DAO`, `crypto meme`, `crypto Twitter drama`, `KOL call`, `degen`, `crypto influencer`, `bear market`, `bull market`
+
+**AI subtopics:**
+- Models & Labs: `GPT-5`, `Claude`, `Gemini`, `Llama`, `Mistral`, `Grok`, `open source LLM`, `model release`, `AI benchmark`, `foundation model`
+- Agents & Automation: `AI agent`, `autonomous agent`, `multi-agent`, `AI workflow`, `AI automation`, `agentic AI`, `computer use`, `AI coding`, `Cursor`, `Devin`
+- Tools & Products: `AI tool`, `AI app`, `AI SaaS`, `ChatGPT`, `Perplexity`, `Midjourney`, `Sora`, `AI video`, `AI image`, `AI voice`
+- Research & Breakthroughs: `AI research`, `AI paper`, `reasoning model`, `AI safety`, `alignment`, `AI consciousness`, `AI benchmark`, `emergent behavior`, `AGI`, `superintelligence`
+- Business & Industry: `AI startup`, `AI funding`, `AI valuation`, `enterprise AI`, `AI chip`, `Nvidia`, `AI infrastructure`, `AI investment`, `AI acquisition`, `AI IPO`
+- Culture & Debate: `AI job loss`, `AI regulation`, `AI copyright`, `AI ethics`, `prompt engineering`, `AI hype`, `AI doomer`, `AI accelerationism`, `e/acc`, `AI meme`
 
 ---
 
 ## Step 2 — Search X for Trending Posts (Last 24 Hours)
 
-Use `web_search` to find high-engagement posts. Run **multiple parallel searches** across different angles:
+Use `web_search` with the **3–5 selected subtopics only**. The sourcing strategy depends on whether a KOL list was provided:
 
-### Search Query Templates
+### Mode A: KOL List Provided (Priority Sourcing)
+
+Scan posts from the brand's trusted accounts first:
+
+```
+site:x.com from:@[handle1] OR from:@[handle2] OR from:@[handle3] [selected_subtopic] since:[yesterday_date]
+```
+
+Run this across all provided handles and selected subtopics. If fewer than 5 high-signal posts are found per subtopic, expand to broad search (Mode B) to fill gaps.
+
+### Mode B: No KOL List (Standard Broad Search)
 
 **Crypto trends:**
 ```
-site:twitter.com OR site:x.com crypto [subtopic] since:[yesterday_date] min_retweets:10
+site:twitter.com OR site:x.com crypto [selected_subtopic] since:[yesterday_date] min_retweets:10
 ```
 
 **AI trends:**
 ```
-site:twitter.com OR site:x.com AI [subtopic] since:[yesterday_date] min_retweets:10
+site:twitter.com OR site:x.com AI [selected_subtopic] since:[yesterday_date] min_retweets:10
 ```
 
-**Suggested subtopics to scan:**
-
-- Crypto (scan all that are relevant to brand):
-  - Market & Price: `Bitcoin`, `Ethereum`, `BTC price`, `ETH price`, `altcoin season`, `crypto crash`, `crypto rally`, `market cap`, `crypto dominance`
-  - Infrastructure & Tech: `Layer 2`, `L2`, `rollup`, `zkEVM`, `Solana`, `Avalanche`, `Cosmos`, `modular blockchain`, `cross-chain bridge`, `interoperability`
-  - DeFi: `DeFi`, `DEX`, `yield farming`, `liquidity pool`, `stablecoin`, `lending protocol`, `TVL`, `restaking`, `liquid staking`, `EigenLayer`
-  - Tokens & Trends: `memecoin`, `airdrop`, `token launch`, `IDO`, `presale`, `new listing`, `pump and dump`, `rug pull`, `whale alert`, `on-chain data`
-  - Institutional & Macro: `Bitcoin ETF`, `crypto ETF`, `institutional crypto`, `BlackRock crypto`, `crypto regulation`, `SEC crypto`, `CBDC`, `crypto tax`, `macro crypto`, `Fed crypto`
-  - Culture & Community: `NFT`, `Web3`, `DAO`, `crypto meme`, `crypto Twitter drama`, `KOL call`, `degen`, `crypto influencer`, `bear market`, `bull market`
-
-- AI (scan all that are relevant to brand):
-  - Models & Labs: `GPT-5`, `Claude`, `Gemini`, `Llama`, `Mistral`, `Grok`, `open source LLM`, `model release`, `AI benchmark`, `foundation model`
-  - Agents & Automation: `AI agent`, `autonomous agent`, `multi-agent`, `AI workflow`, `AI automation`, `agentic AI`, `computer use`, `AI coding`, `Cursor`, `Devin`
-  - Tools & Products: `AI tool`, `AI app`, `AI SaaS`, `ChatGPT`, `Perplexity`, `Midjourney`, `Sora`, `AI video`, `AI image`, `AI voice`
-  - Research & Breakthroughs: `AI research`, `AI paper`, `reasoning model`, `AI safety`, `alignment`, `AI consciousness`, `AI benchmark`, `emergent behavior`, `AGI`, `superintelligence`
-  - Business & Industry: `AI startup`, `AI funding`, `AI valuation`, `enterprise AI`, `AI chip`, `Nvidia`, `AI infrastructure`, `AI investment`, `AI acquisition`, `AI IPO`
-  - Culture & Debate: `AI job loss`, `AI regulation`, `AI copyright`, `AI ethics`, `prompt engineering`, `AI hype`, `AI doomer`, `AI accelerationism`, `e/acc`, `AI meme`
-
-Also search trending hashtags:
+**Always include 1–2 broad trending searches regardless of mode:**
 ```
 web_search: trending crypto twitter 24h
 web_search: trending AI twitter today
-web_search: crypto twitter viral post today
 ```
 
 Use `web_fetch` to retrieve full post content when snippets are too short.
@@ -99,20 +177,20 @@ For each post found, apply this filter checklist:
 
 | Criteria | Rule |
 |---|---|
-| ✅ Impressions | High — prioritize posts described as "viral", "going crazy", or frequently referenced by others |
-| ✅ Retweet / Quote | > 10 RT or QT — only keep posts meeting this threshold |
-| ✅ Comments | Must have replies/comments — skip posts with zero engagement discussion |
-| ❌ Ads / Sponsored | Skip any post marked as "Promoted", "Ad", or from clearly sponsored accounts |
-| ❌ Bot / Spam | Skip accounts with no followers or generic spam patterns |
-| ✅ Recency | Must be within last 24 hours from current timestamp |
-| ✅ Account priority | Prioritize posts from blue-verified accounts (public figures, creators), gold-verified accounts (official organizations, brands), and official project accounts — these carry higher credibility and signal strength |
+| Impressions | High — prioritize posts described as "viral", "going crazy", or frequently referenced by others |
+| Retweet / Quote | > 10 RT or QT — only keep posts meeting this threshold |
+| Comments | Must have replies/comments — skip posts with zero engagement discussion |
+| Ads / Sponsored | Skip any post marked as "Promoted", "Ad", or from clearly sponsored accounts |
+| Bot / Spam | Skip accounts with no followers or generic spam patterns |
+| Recency | Must be within last 24 hours from current timestamp |
+| Account priority | Prioritize posts from blue-verified accounts (public figures, creators), gold-verified accounts (official organizations, brands), and official project accounts — these carry higher credibility and signal strength |
 
-**Scoring (optional, for ranking):**
+**Scoring (for ranking within each cluster):**
 - 3 pts: > 100 RT
 - 2 pts: > 50 RT
 - 1 pt: > 10 RT
-- Bonus 2 pts: post is from a gold-verified account or official project account
-- Bonus 1 pt: post is from a blue-verified account (known creator or KOL)
+- Bonus 2 pts: post from a gold-verified account or official project account
+- Bonus 1 pt: post from a blue-verified account (known creator or KOL)
 - Bonus 1 pt: multiple quote tweets with active discussion
 - Bonus 1 pt: reply from a known influencer or KOL
 
@@ -122,7 +200,7 @@ Keep **top 5–10 posts** per theme cluster.
 
 ## Step 4 — Cluster Into Trend Themes
 
-Group filtered posts into **trend clusters** (2–5 clusters max):
+Group filtered posts into **trend clusters** (5–8 clusters max):
 
 ```
 TREND CLUSTER:
@@ -145,45 +223,55 @@ For each trend cluster, evaluate relevance to the brand:
 
 | Score | Meaning |
 |---|---|
-| 🔥 HIGH | Directly relevant to the brand's product, service, or audience |
-| ⚡ MEDIUM | Tangentially relevant — can be tied in with a smart angle |
-| ❄️ LOW | Not relevant — skip or flag as awareness only |
+| HIGH | Directly relevant to the brand's product, service, or audience |
+| MEDIUM | Tangentially relevant — can be tied in with a smart angle |
+| LOW | Not relevant — skip or flag as awareness only |
 
-**Only output content drafts for 🔥 HIGH and ⚡ MEDIUM trends.**
+**Output content drafts for all HIGH and MEDIUM trends. Minimum 5 Trend Alerts per run — if fewer than 5 HIGH/MEDIUM trends are found, expand the search to additional subtopics.**
 
 ---
 
 ## Output Format — Trend Alert
 
+**CRITICAL: All output must be in English only — no exceptions, regardless of the user's input language.**
+
 Output one block per trend, using this structure:
 
 ---
 
-### 🚨 TREND ALERT #[N]: [Trend Name]
+### TREND ALERT #[N]: [Trend Name]
 
-**📍 Where it's hot:** [Platform area — crypto Twitter / AI Twitter / general tech Twitter]
+**Where it's hot:** [Platform area — crypto Twitter / AI Twitter / general tech Twitter]
 
-**🔥 Why it's relevant:**
-[2–3 sentences: What happened, why people are talking, why this matters to the brand's audience]
+**Why it's relevant:**
+[2-3 sentences: What happened, why people are talking, why this matters to the brand's audience]
 
-**📊 Signal strength:**
-- Top post: [@handle] — [RT count] RTs / [Quote count] QTs
+**Signal strength:**
 - Trend velocity: [Rising fast / Peaked / Fading]
-- Estimated lifespan: [< 6h / 24h / 3–7 days]
+- Estimated lifespan: [< 6h / 24h / 3-7 days]
 
-**🎯 Brand relevance:** [HIGH / MEDIUM] — [1 sentence explaining why]
+**Source posts (minimum 3 required):**
+Use web_search and web_fetch to find real, linkable posts. For each post include:
+- Post URL (x.com or twitter.com direct link)
+- @handle — verified status (gold / blue / project / unverified)
+- Engagement summary (RT count, QT count, or "high engagement" if exact count unavailable)
+- 1-line summary of what the post says
 
-**💡 Content angle for brand:**
+If a direct tweet URL cannot be confirmed, link to the best available source (news article, thread aggregator) and note it as "via [source]". Never fabricate URLs.
+
+**Brand relevance:** [HIGH / MEDIUM] — [1 sentence explaining why]
+
+**Content angle for brand:**
 [The specific lens or hook the brand should use — what POV, what emotion, what CTA]
 
-**✍️ Draft Content:**
+**Draft Content:**
 
-> **Option A — [Format: e.g., Single Tweet / Hook Tweet]**
-> [Draft tweet text — ready to post or lightly edit]
-> [Suggested hashtags if applicable]
+Option A — [Format: e.g., Single Tweet / Hook Tweet]
+[Draft tweet text in English — ready to post or lightly edit]
+[Suggested hashtags if applicable]
 
-> **Option B — [Format: e.g., Thread opener / Meme caption]**
-> [Alternative angle draft]
+Option B — [Format: e.g., Thread opener / Meme caption]
+[Alternative angle draft in English]
 
 ---
 
@@ -192,20 +280,26 @@ Output one block per trend, using this structure:
 After all trend alerts, add a summary table:
 
 ```
-## 📋 TREND SUMMARY — [Date] [Time]
+TREND SUMMARY — [Date] [Time]
+Subtopics scanned: [list of 3-5 subtopics used]
 
-| # | Trend | Relevance | Recommended Action | Urgency |
-|---|---|---|---|---|
-| 1 | [Name] | 🔥 HIGH | Post now | < 2h |
-| 2 | [Name] | ⚡ MEDIUM | Schedule for later today | < 6h |
-| 3 | [Name] | ❄️ LOW | Monitor only | — |
+| # | Trend          | Relevance | Recommended Action    | Urgency |
+|---|----------------|-----------|-----------------------|---------|
+| 1 | [Name]         | HIGH      | Post now              | < 2h    |
+| 2 | [Name]         | MEDIUM    | Schedule for tonight  | < 6h    |
+| 3 | [Name]         | HIGH      | Post now              | < 2h    |
+| 4 | [Name]         | MEDIUM    | Schedule for tonight  | < 6h    |
+| 5 | [Name]         | LOW       | Monitor only          | -       |
 
-💡 TOP PICK: Trend #[N] — [One line reason why this is the best opportunity right now]
+TOP PICK: Trend #[N] — [One line reason why this is the best opportunity right now]
 ```
 
-## Notes
+---
+
+## Important Notes
 
 - **Always timestamp the scan** — state clearly: "Scanned at [time], trends reflect last 24h from this point"
+- **Always state which subtopics were scanned** — include in the summary output
 - **Never fabricate post data** — if RT counts are not visible in search results, say "estimated high engagement" and note the uncertainty
 - **Prioritize original posts over aggregators** — find the actual tweet, not just a newsletter summarizing it
 - **Ads detection**: Any post from accounts with a "Promoted" label, or accounts that only post promotional content with no organic replies — skip
