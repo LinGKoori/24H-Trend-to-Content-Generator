@@ -188,7 +188,7 @@ Keep **top 5–10 posts** per theme cluster.
 
 ## Step 4 — Cluster Into Trend Themes
 
-Group filtered posts into **trend clusters** (5–8 clusters max):
+Group filtered posts into **trend clusters** (2–5 clusters max):
 
 ```
 TREND CLUSTER:
@@ -215,7 +215,7 @@ For each trend cluster, evaluate relevance to the brand:
 | MEDIUM | Tangentially relevant — can be tied in with a smart angle |
 | LOW | Not relevant — skip or flag as awareness only |
 
-**Output content drafts for all HIGH and MEDIUM trends. Minimum 5 Trend Alerts per run — if fewer than 5 HIGH/MEDIUM trends are found, expand the search to additional subtopics.**
+**Only output content drafts for HIGH and MEDIUM trends.**
 
 ---
 
@@ -261,26 +261,6 @@ Option A — [Format: e.g., Single Tweet / Hook Tweet]
 Option B — [Format: e.g., Thread opener / Meme caption]
 [Alternative angle draft in English]
 
----
-
-## Output Format — Full Run Summary
-
-After all trend alerts, add a summary table:
-
-```
-TREND SUMMARY — [Date] [Time]
-Subtopics scanned: [list of 3-5 subtopics used]
-
-| # | Trend          | Relevance | Recommended Action    | Urgency |
-|---|----------------|-----------|-----------------------|---------|
-| 1 | [Name]         | HIGH      | Post now              | < 2h    |
-| 2 | [Name]         | MEDIUM    | Schedule for tonight  | < 6h    |
-| 3 | [Name]         | HIGH      | Post now              | < 2h    |
-| 4 | [Name]         | MEDIUM    | Schedule for tonight  | < 6h    |
-| 5 | [Name]         | LOW       | Monitor only          | -       |
-
-TOP PICK: Trend #[N] — [One line reason why this is the best opportunity right now]
-```
 
 ---
 
