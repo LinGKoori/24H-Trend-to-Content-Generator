@@ -1,6 +1,6 @@
 ---
-name: trend-to-content-generator
-description: >
+Name: trend-to-content-generator
+Description: >
   24h Trend-to-Content Generator for crypto and AI brands on X (Twitter).
   Use this skill whenever the user wants to: find trending crypto or AI topics on X/Twitter,
   generate content ideas based on viral posts, scan social media for hot trends,
