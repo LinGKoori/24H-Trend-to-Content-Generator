@@ -1,4 +1,5 @@
-# 24H-Trend-to-Content-Generator 
+# 24h Trend-to-Content Generator
+
 > An AI skill that scans X (Twitter) for the hottest crypto and AI trends in the past 24 hours — filters for high-signal posts, clusters them into themes, and outputs ready-to-post brand content with real source links.
 
 ---
@@ -120,10 +121,91 @@ Compatible with: Claude Project · Custom GPT · Any LLM platform with web searc
 
 ---
 
+## How to Iterate
+
+The skill improves with feedback. After each run, you can tell it what worked and what didn't — and it will adjust its selection logic for the next run within the same session.
+
+---
+
+### Giving Feedback on Trend Relevance
+
+If a trend alert misses the mark, say so directly:
+
+| Feedback | What it does |
+|---|---|
+| `"Trend #3 is not relevant to our brand"` | Skill removes that theme and replaces with a different subtopic |
+| `"We don't cover regulatory news — exclude that angle"` | Skill deprioritizes Institutional & Macro subtopics for this brand |
+| `"Too broad — we only care about Solana ecosystem"` | Skill narrows scan to Infrastructure & Tech with Solana-specific queries |
+| `"The tone is too neutral, we're more degen"` | Skill rewrites drafts with sharper, more provocative tone |
+| `"Find more trends like Alert #2"` | Skill uses that trend's theme as a signal to find similar clusters |
+
+---
+
+### Giving Feedback on Draft Quality
+
+If the content drafts aren't right:
+
+| Feedback | What it does |
+|---|---|
+| `"Option A is too long, keep it under 200 chars"` | Skill tightens all subsequent drafts |
+| `"Add more urgency to the CTA"` | Skill rewrites CTAs with harder deadlines and action triggers |
+| `"Don't use hashtags"` | Skill removes hashtags from all drafts for this run |
+| `"Thread format only — no single tweets"` | Skill outputs thread openers exclusively |
+
+---
+
+### Saving Preferences for Future Runs
+
+The skill does not retain memory between separate sessions. To make improvements persistent, update your **brand spec `.md` file** with the feedback:
+
+```markdown
+## Content Preferences
+- Exclude: regulatory/macro content
+- Tone: high degen, no neutral framing
+- Format: thread openers only
+- Max tweet length: 200 chars
+- Ecosystem focus: Solana, Hyperliquid, Base
+
+## Excluded Subtopics
+- Institutional & Macro
+- Culture & Debate (AI)
+```
+
+On the next run, paste the updated spec — the skill will apply all preferences automatically from the start.
+
+---
+
+### Full Iteration Loop
+
+```
+Run skill
+    |
+Review 5+ Trend Alerts
+    |
+Flag irrelevant trends / weak drafts
+    |
+Skill adjusts: re-runs affected alerts with new logic
+    |
+Approve final output -> post
+    |
+Update brand spec .md with confirmed preferences
+    |
+Next run starts smarter
+```
+
+---
+
 ## File Structure
 
 ```
 trend-to-content-generator/
 ├── README.md       <- this file
 └── SKILL.md        <- full skill instructions for AI agent
+```
+
+---
+
+## Built For
+
+**Cook a Skill** — Internal Hackathon
 Skill category: Social Media · Content · Crypto/AI Trend Intelligence
